@@ -7,8 +7,12 @@ int matrix[] = {
   KEY_ESC, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 91, 93,
   KEY_TAB, 97, 115, 100, 102, 103, 104, 106, 107, 108, 59, KEY_RETURN, KEY_RETURN,
   KEY_LEFT_SHIFT, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_RIGHT_SHIFT, KEY_RIGHT_SHIFT,
-  96, 96,KEY_LEFT_ALT, KEY_LEFT_CTRL, KEY_F12, 32, 32, KEY_F12, KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_UP_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW
+  96, 96,KEY_LEFT_ALT, KEY_LEFT_CTRL, KEY_F12, KEY_SPACE, KEY_SPACE, KEY_F12, KEY_RIGHT_ALT, KEY_LEFT_ARROW, KEY_UP_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW
 };
+
+boolean backspace_pressed = false;
+boolean space_pressed = false;
+boolean return_pressed = false;
 
 int old[65];
 
@@ -18,7 +22,7 @@ int columnMapping[] = {12, 11, 9, 10, 8, 7, 6, 5, 4, 3, 2, 1, 14};
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Gunwo");
+  Serial.println("Hello World");
 
   for (int i = 0; i < ROWS; i++) {
     pinMode(rowsMapping[i], INPUT_PULLUP);
@@ -33,7 +37,6 @@ void setup() {
 }
 
 void scan() {
-  Serial.println("===================");
   for (int i = 0; i < COLUMNS; i++) {
     selectColumn(i);
     delayMicroseconds(50);
@@ -41,26 +44,63 @@ void scan() {
       int result = digitalRead(rowsMapping[j]);
 
       int m = j * COLUMNS + i;
-      if (result == LOW) {
+      if (result == LOW && old[m] == HIGH) {
         old[m] = LOW;
-        Serial.print("|");
-        Serial.print(matrix[m]);
-        Keyboard.press(matrix[m]);
+        press(matrix[m]);
       } else if (result == HIGH && old[m] == LOW) {
         old[m] = HIGH;
-        Keyboard.release(matrix[m]);
+        release(matrix[m]);
       }
-      Serial.print(result);
-      Serial.print(" ");
     }
     unselectColumn(i);
-    Serial.println("");
   }
 }
 
 void loop() {
   scan();
   delay(1);
+}
+
+void press(int key) {
+  if (key == KEY_BACKSPACE) {
+    if (!backspace_pressed) {
+      backspace_pressed = true;
+      Keyboard.press(key); 
+    }
+  } else if (key == KEY_SPACE) {
+    if (!space_pressed) {
+      space_pressed = true;
+      Keyboard.press(key);
+    }
+  } else if (key == KEY_RETURN) {
+    if (!return_pressed) {
+      return_pressed = true;
+      Keyboard.press(key); 
+    }
+  } else {
+    Keyboard.press(key);
+  }
+}
+
+void release(int key) {
+  if (key == KEY_BACKSPACE) {
+    if (backspace_pressed) {
+      backspace_pressed = false;
+      Keyboard.release(key); 
+    }
+  } else if (key == KEY_SPACE) {
+    if (space_pressed) {
+      space_pressed = false;
+      Keyboard.release(key); 
+    }
+  } else if (key == KEY_RETURN) {
+    if (return_pressed) {
+      return_pressed = false;
+      Keyboard.release(key); 
+    }
+  } else {
+    Keyboard.release(key);
+  }
 }
 
 /* row: 0 to 12 */
