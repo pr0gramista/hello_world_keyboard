@@ -15,12 +15,14 @@ int matrix[] = {
 };
 
 int down[] = {
-  KEY_ESC, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F10, KEY_F11, KEY_DELETE, KEY_DELETE,
-  EMPTY, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 91, 93,
-  KEY_TAB, 97, 115, 100, 102, 103, 104, 106, 107, 108, 59, KEY_RETURN, KEY_RETURN,
-  KEY_LEFT_SHIFT, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_PAGE_UP, KEY_INSERT,
-  KEY_MOUSE_MODE, KEY_LEFT_GUI, KEY_LEFT_CTRL, KEY_LEFT_ALT, KEY_LAYER_DOWN, KEY_SPACE, KEY_SPACE, KEY_LEFT_SHIFT, KEY_RIGHT_ALT, EMPTY, KEY_HOME, KEY_PAGE_DOWN, KEY_END
+  KEY_ESC, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_DELETE, KEY_DELETE,
+  EMPTY, KEY_F11, KEY_F12, 101, 114, 116, 121, 117, 105, KEY_HOME, KEY_PAGE_UP, KEY_INSERT, 93,
+  KEY_TAB, 97, 115, 100, 102, 103, 104, 106, 107, KEY_END, KEY_PAGE_DOWN, KEY_RETURN, KEY_RETURN,
+  KEY_LEFT_SHIFT, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_UP_ARROW, KEY_RIGHT_SHIFT,
+  KEY_MOUSE_MODE, KEY_LEFT_CTRL, KEY_LEFT_GUI, KEY_LEFT_ALT, KEY_LAYER_DOWN, KEY_SPACE, KEY_SPACE, KEY_LEFT_SHIFT, KEY_RIGHT_ALT, EMPTY, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW
 };
+
+boolean layer_down = false;
 
 boolean backspace_pressed = false;
 boolean space_pressed = false;
@@ -67,10 +69,10 @@ void scan() {
       int m = j * COLUMNS + i;
       if (result == LOW && old[m] == HIGH) {
         old[m] = LOW;
-        press(matrix[m]);
+        press(m);
       } else if (result == HIGH && old[m] == LOW) {
         old[m] = HIGH;
-        release(matrix[m]);
+        release(m);
       }
     }
     unselectColumn(i);
@@ -95,7 +97,14 @@ void mouse () {
   }
 }
 
-void press(int key) {
+void press(int index) {
+  int key = 0;
+  if (layer_down == false) {
+    key = matrix[index];
+  } else {
+    key = down[index];
+  }
+  
   if (key == KEY_BACKSPACE) {
     if (!backspace_pressed) {
       backspace_pressed = true;
@@ -107,6 +116,8 @@ void press(int key) {
       return_pressed = true;
       Keyboard.press(key); 
     }
+  } else if (key == KEY_LAYER_DOWN) {
+    layer_down = true;
   } else if (key == KEY_MOUSE_MODE) {
     Mouse.begin();
     mouse_mode = true;
@@ -134,7 +145,14 @@ void press(int key) {
   }
 }
 
-void release(int key) {
+void release(int index) {
+  int key = 0;
+  if (layer_down == false) {
+    key = matrix[index];
+  } else {
+    key = down[index];
+  }
+  
   if (key == KEY_BACKSPACE) {
     if (backspace_pressed) {
       backspace_pressed = false;
@@ -150,6 +168,8 @@ void release(int key) {
       return_pressed = false;
       Keyboard.release(key); 
     }
+  } else if (key == KEY_LAYER_DOWN) {
+    layer_down = false;
   } else if (key == KEY_MOUSE_MODE) {
     Mouse.end();
     mouse_mode = false;
