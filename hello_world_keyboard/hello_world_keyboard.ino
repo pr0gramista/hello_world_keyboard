@@ -31,12 +31,12 @@ boolean space_pressed = false;
 boolean return_pressed = false;
 
 boolean mouse_mode = false;
-unsigned long mouse_timer = 0; 
+unsigned long mouse_timer = 0;
 const long mouse_interval = 10; 
 
 float move_x = 0;
 float move_y = 0;
-float sensitivity = 4;
+float sensitivity = 2;
 float wheel = 0;
 
 int old[75];
@@ -67,21 +67,24 @@ void scan() {
     for (int j = 0; j < COLUMNS; j++) {
       int result = digitalRead(columnMapping[j]);
       
-      if (result == LOW) {
+      /*if (result == LOW) {
         Serial.print("Row ");
         Serial.print(i);
         Serial.print(" Pin ");
         Serial.println(columnMapping[j]);
         hit = true;
-      }
+      }*/
 
       int m = i * COLUMNS + j;
       if (result == LOW && old[m] == HIGH) {
         old[m] = LOW;
+        Serial.print("Pressed ");
         Serial.println(m);
         press(m);
       } else if (result == HIGH && old[m] == LOW) {
         old[m] = HIGH;
+        Serial.print("Released ");
+        Serial.println(m);
         release(m);
       }
     }
@@ -94,7 +97,20 @@ void scan() {
 
 void loop() {
   scan();
+
+  if (mouse_mode) {
+   mouse(); 
+  }
   delay(1);
+}
+
+void mouse () {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - mouse_timer >= mouse_interval) {
+    mouse_timer = currentMillis;
+    Mouse.move(move_x * sensitivity, move_y * sensitivity * -1, wheel);
+  }
 }
 
 void press(int index) {
@@ -104,6 +120,7 @@ void press(int index) {
   } else {
     key = down[index];
   }
+  Serial.println(key);
   
   if (key == KEY_BACKSPACE) {
     if (!backspace_pressed) {
@@ -126,19 +143,20 @@ void press(int index) {
     wheel = 0;
   } else if (key == 119 && mouse_mode) {
      move_y += 1;
+     Serial.println("no kurwea");
   } else if (key == 115 && mouse_mode) {
      move_y -= 1;
-  } else if (key == 97 && mouse_mode) {
-     move_x += 1;
   } else if (key == 100 && mouse_mode) {
+     move_x += 1;
+  } else if (key == 97 && mouse_mode) {
      move_x -= 1;
-  } else if (key == 113 && mouse_mode) {
+  } else if (key == 51 && mouse_mode) {
      wheel += 1;
-  } else if (key == 101 && mouse_mode) {
+  } else if (key == 50 && mouse_mode) {
      wheel -= 1;
-  } else if (key == 47 && mouse_mode) {
+  } else if (key == 113 && mouse_mode) {
     Mouse.press(MOUSE_LEFT);
-  } else if (key == KEY_RIGHT_SHIFT && mouse_mode) {
+  } else if (key == 101 && mouse_mode) {
     Mouse.press(MOUSE_RIGHT);
   } else {
     Keyboard.press(key);
@@ -152,6 +170,7 @@ void release(int index) {
   } else {
     key = down[index];
   }
+  Serial.println(key);
   
   if (key == KEY_BACKSPACE) {
     if (backspace_pressed) {
@@ -174,20 +193,20 @@ void release(int index) {
     Mouse.end();
     mouse_mode = false;
   } else if (key == 119 && mouse_mode) {
-     move_y += 1;
-  } else if (key == 115 && mouse_mode) {
      move_y -= 1;
-  } else if (key == 97 && mouse_mode) {
-     move_x += 1;
+  } else if (key == 115 && mouse_mode) {
+     move_y += 1;
   } else if (key == 100 && mouse_mode) {
      move_x -= 1;
-  } else if (key == 113 && mouse_mode) {
-     wheel += 1;
-  } else if (key == 101 && mouse_mode) {
+  } else if (key == 97 && mouse_mode) {
+     move_x += 1;
+  } else if (key == 51 && mouse_mode) {
      wheel -= 1;
-  } else if (key == 47 && mouse_mode) {
+  } else if (key == 50 && mouse_mode) {
+     wheel += 1;
+  } else if (key == 113 && mouse_mode) {
     Mouse.release(MOUSE_LEFT);
-  } else if (key == KEY_RIGHT_SHIFT && mouse_mode) {
+  } else if (key == 101 && mouse_mode) {
     Mouse.release(MOUSE_RIGHT);
   } else {
     Keyboard.release(key);
