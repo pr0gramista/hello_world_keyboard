@@ -124,17 +124,17 @@ void press(int index) {
     move_x = 0;
     move_y = 0;
     wheel = 0;
-  } else if (key == KEY_UP_ARROW && mouse_mode) {
+  } else if (key == 119 && mouse_mode) {
      move_y += 1;
-  } else if (key == KEY_DOWN_ARROW && mouse_mode) {
+  } else if (key == 115 && mouse_mode) {
      move_y -= 1;
-  } else if (key == KEY_RIGHT_ARROW && mouse_mode) {
+  } else if (key == 97 && mouse_mode) {
      move_x += 1;
-  } else if (key == KEY_LEFT_ARROW && mouse_mode) {
+  } else if (key == 100 && mouse_mode) {
      move_x -= 1;
-  } else if (key == 46 && mouse_mode) {
+  } else if (key == 113 && mouse_mode) {
      wheel += 1;
-  } else if (key == EMPTY && mouse_mode) {
+  } else if (key == 101 && mouse_mode) {
      wheel -= 1;
   } else if (key == 47 && mouse_mode) {
     Mouse.press(MOUSE_LEFT);
@@ -173,18 +173,18 @@ void release(int index) {
   } else if (key == KEY_MOUSE_MODE) {
     Mouse.end();
     mouse_mode = false;
-  } else if (key == KEY_UP_ARROW && mouse_mode) {
-     move_y -= 1;
-  } else if (key == KEY_DOWN_ARROW && mouse_mode) {
+  } else if (key == 119 && mouse_mode) {
      move_y += 1;
-  } else if (key == KEY_RIGHT_ARROW && mouse_mode) {
-     move_x -= 1;
-  } else if (key == KEY_LEFT_ARROW && mouse_mode) {
+  } else if (key == 115 && mouse_mode) {
+     move_y -= 1;
+  } else if (key == 97 && mouse_mode) {
      move_x += 1;
-  } else if (key == 46 && mouse_mode) {
-     wheel -= 1;
-  } else if (key == EMPTY && mouse_mode) {
+  } else if (key == 100 && mouse_mode) {
+     move_x -= 1;
+  } else if (key == 113 && mouse_mode) {
      wheel += 1;
+  } else if (key == 101 && mouse_mode) {
+     wheel -= 1;
   } else if (key == 47 && mouse_mode) {
     Mouse.release(MOUSE_LEFT);
   } else if (key == KEY_RIGHT_SHIFT && mouse_mode) {
