@@ -1,27 +1,25 @@
 #define KEY_LAYER_DOWN 50920
 #define KEY_MOUSE_MODE 50921
 #define EMPTY 50922
-#define PAD 50923
-#define SPACE 32
 
 int ROWS = 5;
-int COLUMNS = 14;
-int KEYS = 23;
+int COLUMNS = 13;
+int KEYS = 65;
 
 int matrix[] = {
-  KEY_ESC, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, KEY_BACKSPACE,
-  KEY_TAB, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 91, 93, 92,
-  KEY_CAPS_LOCK, PAD, 97, 115, 100, 102, 103, 104, 106, 107, 108, 59, 39, KEY_RETURN,
-  KEY_LEFT_SHIFT, PAD, PAD, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_RIGHT_SHIFT,
-  KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, EMPTY, KEY_MOUSE_MODE
+  KEY_ESC, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, KEY_BACKSPACE, KEY_BACKSPACE,
+  39, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 91, 93,
+  KEY_TAB, 97, 115, 100, 102, 103, 104, 106, 107, 108, 59, KEY_RETURN, KEY_RETURN,
+  EMPTY, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_UP_ARROW, KEY_RIGHT_SHIFT,
+  KEY_MOUSE_MODE, KEY_LEFT_CTRL, KEY_LEFT_GUI, KEY_LEFT_ALT, KEY_LAYER_DOWN, KEY_SPACE, KEY_SPACE, KEY_LEFT_SHIFT, KEY_RIGHT_ALT, EMPTY, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW
 };
 
 int down[] = {
-  96, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, KEY_BACKSPACE,
-  126, KEY_HOME, KEY_UP_ARROW, KEY_END, 114, 116, 121, 117, 105, 111, 112, 91, 93, 92,
-  KEY_CAPS_LOCK, PAD, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW, 102, 103, 104, 106, 107, 108, 59, 39, KEY_RETURN,
-  KEY_LEFT_SHIFT, PAD, PAD, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_RIGHT_SHIFT,
-  KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, EMPTY, KEY_MOUSE_MODE
+  96, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, 45, 61, KEY_DELETE, KEY_DELETE,
+  EMPTY, KEY_F9, KEY_F10, KEY_F11, KEY_F12, 116, 121, 117, 105, KEY_HOME, KEY_PAGE_UP, KEY_INSERT, 92,
+  KEY_TAB, 97, 115, 100, 102, 103, 104, 106, 107, KEY_END, KEY_PAGE_DOWN, KEY_RETURN, KEY_RETURN,
+  KEY_LEFT_SHIFT, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_UP_ARROW, KEY_RIGHT_SHIFT,
+  KEY_MOUSE_MODE, KEY_LEFT_CTRL, KEY_LEFT_GUI, KEY_LEFT_ALT, KEY_LAYER_DOWN, KEY_SPACE, KEY_SPACE, KEY_LEFT_SHIFT, KEY_RIGHT_ALT, EMPTY, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW
 };
 
 boolean layer_down = false;
@@ -39,62 +37,64 @@ float move_y = 0;
 float sensitivity = 4;
 float wheel = 0;
 
-int old[75];
+int old[65];
 
 // pins in order from keyboard column 1 to 13
-int rowsMapping[] = {19, 21, 22, 20, 23};
-int columnMapping[] = {0, 1, 2, 3, 8, 5, 6, 7, 9, 15, 10, 14, 16, 17};
+int rowsMapping[] = {19, 18, 17, 16, 15};
+int columnMapping[] = {12, 11, 9, 10, 8, 7, 6, 5, 4, 3, 2, 1, 14};
 
 void setup() {
   Serial.begin(9600);
   Serial.println("Hello World");
 
-  for (int i = 0; i < COLUMNS; i++) {
-    pinMode(columnMapping[i], INPUT_PULLUP);
-  }
-  
   for (int i = 0; i < ROWS; i++) {
-    pinMode(rowsMapping[i], OUTPUT);
-    digitalWrite(rowsMapping[i], HIGH);
+    pinMode(rowsMapping[i], INPUT_PULLUP);
   }
+
+  // Set pinmode for columns
+  for (int i = 0; i < COLUMNS; i++) {
+    pinMode(columnMapping[i], OUTPUT);
+    digitalWrite(columnMapping[i], HIGH);
+  }
+  Keyboard.begin();
 }
 
 void scan() {
-  boolean hit = false;
-  for (int i = 0; i < ROWS; i++) {
-    selectRow(i);
+  for (int i = 0; i < COLUMNS; i++) {
+    selectColumn(i);
     delayMicroseconds(50);
-    for (int j = 0; j < COLUMNS; j++) {
-      int result = digitalRead(columnMapping[j]);
-      
-      if (result == LOW) {
-        Serial.print("Row ");
-        Serial.print(i);
-        Serial.print(" Pin ");
-        Serial.println(columnMapping[j]);
-        hit = true;
-      }
+    for (int j = 0; j < ROWS; j++) {
+      int result = digitalRead(rowsMapping[j]);
 
-      int m = i * COLUMNS + j;
+      int m = j * COLUMNS + i;
       if (result == LOW && old[m] == HIGH) {
         old[m] = LOW;
-        Serial.println(m);
         press(m);
       } else if (result == HIGH && old[m] == LOW) {
         old[m] = HIGH;
         release(m);
       }
     }
-    unselectRow(i);
-  }
-  if (hit == false) {
-    //Serial.println("No hit");
+    unselectColumn(i);
   }
 }
 
 void loop() {
   scan();
+
+  if (mouse_mode) {
+   mouse(); 
+  }
   delay(1);
+}
+
+void mouse () {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - mouse_timer >= mouse_interval) {
+    mouse_timer = currentMillis;
+    Mouse.move(move_x * sensitivity, move_y * sensitivity * -1, wheel);
+  }
 }
 
 void press(int index) {
@@ -144,7 +144,7 @@ void press(int index) {
     Keyboard.press(key);
   }
 }
-  
+
 void release(int index) {
   int key = 0;
   if (layer_down == false) {
@@ -194,10 +194,14 @@ void release(int index) {
   }
 }
 
-void selectRow(int row) {
-  digitalWrite(rowsMapping[row], LOW);
+/* row: 0 to 12 */
+void selectColumn(int column) {
+  digitalWrite(columnMapping[column], LOW);
 }
 
-void unselectRow(int row) {
-  digitalWrite(rowsMapping[row], HIGH);
+void unselectColumn(int column) {
+  digitalWrite(columnMapping[column], HIGH);
 }
+
+
+
