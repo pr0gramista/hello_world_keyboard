@@ -39,6 +39,11 @@ float move_y = 0;
 float sensitivity = 2;
 float wheel = 0;
 
+// Joystick
+int new_x = 0;
+int old_x = 0;
+int count_down_x = 5;
+
 int old[75];
 
 // pins in order from keyboard column 1 to 13
@@ -57,6 +62,9 @@ void setup() {
     pinMode(rowsMapping[i], OUTPUT);
     digitalWrite(rowsMapping[i], HIGH);
   }
+
+  Joystick.begin();
+  pinMode(18, INPUT);
 }
 
 void scan() {
@@ -102,6 +110,18 @@ void loop() {
    mouse(); 
   }
   delay(1);
+
+  int x_axis = 1024 - analogRead(18);
+  if (x_axis == new_x) {
+    count_down_x = count_down_x - 1;
+    if (count_down_x < 0) {
+      old_x = new_x;
+    }
+  } else {
+    new_x = x_axis;
+  }
+  Serial.println(x_axis);
+  Joystick.X(old_x);
 }
 
 void mouse () {
