@@ -122,6 +122,7 @@ void loop() {
   }
   Serial.println(x_axis);
   Joystick.X(old_x);
+  sensitivity = old_x / 64;
 }
 
 void mouse () {
