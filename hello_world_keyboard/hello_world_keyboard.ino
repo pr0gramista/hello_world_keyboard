@@ -1,3 +1,5 @@
+#include <Rotary.h>
+
 #define KEY_LAYER_DOWN 50920
 #define KEY_MOUSE_MODE 50921
 #define EMPTY 50922
@@ -50,10 +52,13 @@ int old[75];
 int rowsMapping[] = {19, 21, 22, 20, 23};
 int columnMapping[] = {0, 1, 2, 3, 8, 5, 6, 7, 9, 15, 10, 14, 16, 17};
 
+Rotary r = Rotary(11, 12);
+
 void setup() {
   Serial.begin(9600);
   Serial.println("Hello World");
 
+  // Keyboard setup
   for (int i = 0; i < COLUMNS; i++) {
     pinMode(columnMapping[i], INPUT_PULLUP);
   }
@@ -63,6 +68,7 @@ void setup() {
     digitalWrite(rowsMapping[i], HIGH);
   }
 
+  // Joystick setup
   Joystick.begin();
   pinMode(18, INPUT);
 }
@@ -120,9 +126,22 @@ void loop() {
   } else {
     new_x = x_axis;
   }
-  Serial.println(x_axis);
+  // Serial.println(x_axis);
   Joystick.X(old_x);
   sensitivity = old_x / 64;
+
+  int result = r.process();
+  if (result) {
+    if (result == DIR_CW) {
+      Keyboard.press(KEY_RIGHT_ARROW);
+      Keyboard.release(KEY_RIGHT_ARROW);
+      
+    } else {
+      Keyboard.press(KEY_LEFT_ARROW);
+      Keyboard.release(KEY_LEFT_ARROW);
+    }
+    Serial.println(result == DIR_CW ? "Right" : "Left");
+  }
 }
 
 void mouse () {
