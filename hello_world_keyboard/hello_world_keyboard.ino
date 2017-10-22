@@ -2,6 +2,7 @@
 
 #define KEY_LAYER_DOWN 50920
 #define KEY_MOUSE_MODE 50921
+#define KEY_ENCODER_2 50922
 #define EMPTY 50922
 #define PAD 50923
 #define SPACE 32
@@ -23,7 +24,7 @@ int down[] = {
   126, KEY_HOME, KEY_UP_ARROW, KEY_END, 114, 116, 121, 117, 105, 111, 112, 91, 93, 92,
   KEY_CAPS_LOCK, PAD, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW, 102, 103, 104, 106, 107, 108, 59, 39, KEY_RETURN,
   KEY_LEFT_SHIFT, PAD, PAD, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_RIGHT_SHIFT,
-  KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, EMPTY, KEY_MOUSE_MODE
+  KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, KEY_ENCODER_2, KEY_MOUSE_MODE
 };
 
 boolean layer_down = false;
@@ -52,7 +53,9 @@ int old[75];
 int rowsMapping[] = {19, 21, 22, 20, 23};
 int columnMapping[] = {0, 1, 2, 3, 8, 5, 6, 7, 9, 15, 10, 14, 16, 17};
 
+// Encoder
 Rotary r = Rotary(11, 12);
+boolean r_vertical = false;
 
 void setup() {
   Serial.begin(9600);
@@ -133,12 +136,23 @@ void loop() {
   int result = r.process();
   if (result) {
     if (result == DIR_CW) {
-      Keyboard.press(KEY_RIGHT_ARROW);
-      Keyboard.release(KEY_RIGHT_ARROW);
-      
+      if (r_vertical == false) {
+        Keyboard.press(KEY_RIGHT_ARROW);
+        Keyboard.release(KEY_RIGHT_ARROW);
+      }
+      else {
+        Keyboard.press(KEY_UP_ARROW);
+        Keyboard.release(KEY_UP_ARROW);
+      }
     } else {
-      Keyboard.press(KEY_LEFT_ARROW);
-      Keyboard.release(KEY_LEFT_ARROW);
+      if (r_vertical == false) {
+        Keyboard.press(KEY_LEFT_ARROW);
+        Keyboard.release(KEY_LEFT_ARROW);
+      }
+      else {
+        Keyboard.press(KEY_DOWN_ARROW);
+        Keyboard.release(KEY_DOWN_ARROW);
+      }
     }
     Serial.println(result == DIR_CW ? "Right" : "Left");
   }
@@ -167,6 +181,8 @@ void press(int index) {
       backspace_pressed = true;
       Keyboard.press(key); 
     }
+  } else if (key == KEY_ENCODER_2) {
+    r_vertical = true;
   } else if (key == KEY_SPACE) {
   } else if (key == KEY_RETURN) {
     if (!return_pressed) {
@@ -217,6 +233,8 @@ void release(int index) {
       backspace_pressed = false;
       Keyboard.release(key); 
     }
+  } else if (key == KEY_ENCODER_2) {
+    r_vertical = false;
   } else if (key == KEY_SPACE) {
     if (space_pressed) {
       space_pressed = false;
