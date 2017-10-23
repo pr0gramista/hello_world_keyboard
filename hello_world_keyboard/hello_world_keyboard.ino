@@ -56,6 +56,7 @@ int columnMapping[] = {0, 1, 2, 3, 8, 5, 6, 7, 9, 15, 10, 14, 16, 17};
 // Encoder
 Rotary r = Rotary(11, 12);
 boolean r_vertical = false;
+boolean r_button = false;
 
 void setup() {
   Serial.begin(9600);
@@ -74,6 +75,7 @@ void setup() {
   // Joystick setup
   Joystick.begin();
   pinMode(18, INPUT);
+  pinMode(4, INPUT_PULLUP);
 }
 
 void scan() {
@@ -133,6 +135,20 @@ void loop() {
   Joystick.X(old_x);
   sensitivity = old_x / 64;
 
+  //Encoder
+  //Button
+  int state = digitalRead(4);
+  if (state != r_button) {
+    r_button = state;
+    Serial.println(state);
+    Serial.println("Encoder button");
+    if (state == LOW) {
+      r_vertical = true;
+    } else {
+      r_vertical = false;
+    }
+  }
+  
   int result = r.process();
   if (result) {
     if (result == DIR_CW) {
