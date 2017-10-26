@@ -6,7 +6,8 @@
 #define EMPTY 50922
 #define PAD 50923
 #define SPACE 32
-#define KEY_PRNT_SCRN
+
+#define DEBUG 0
 
 int ROWS = 5;
 int COLUMNS = 14;
@@ -80,38 +81,30 @@ void setup() {
 }
 
 void scan() {
-  boolean hit = false;
   for (int i = 0; i < ROWS; i++) {
     selectRow(i);
     delayMicroseconds(50);
     for (int j = 0; j < COLUMNS; j++) {
       int result = digitalRead(columnMapping[j]);
-      
-      /*if (result == LOW) {
-        Serial.print("Row ");
-        Serial.print(i);
-        Serial.print(" Pin ");
-        Serial.println(columnMapping[j]);
-        hit = true;
-      }*/
 
       int m = i * COLUMNS + j;
       if (result == LOW && old[m] == HIGH) {
         old[m] = LOW;
+        #if DEBUG 
         Serial.print("Pressed ");
         Serial.println(m);
+        #endif
         press(m);
       } else if (result == HIGH && old[m] == LOW) {
         old[m] = HIGH;
+        #if DEBUG
         Serial.print("Released ");
         Serial.println(m);
+        #endif
         release(m);
       }
     }
     unselectRow(i);
-  }
-  if (hit == false) {
-    //Serial.println("No hit");
   }
 }
 
@@ -141,8 +134,9 @@ void loop() {
   int state = digitalRead(4);
   if (state != r_button) {
     r_button = state;
-    Serial.println(state);
+    #if DEBUG
     Serial.println("Encoder button");
+    #endif
     if (state == LOW) {
       r_vertical = true;
     } else {
@@ -171,7 +165,9 @@ void loop() {
         Keyboard.release(KEY_DOWN_ARROW);
       }
     }
+    #if DEBUG
     Serial.println(result == DIR_CW ? "Right" : "Left");
+    #endif
   }
 }
 
@@ -191,7 +187,6 @@ void press(int index) {
   } else {
     key = down[index];
   }
-  Serial.println(key);
   
   if (key == KEY_BACKSPACE) {
     if (!backspace_pressed) {
@@ -216,7 +211,6 @@ void press(int index) {
     wheel = 0;
   } else if (key == 119 && mouse_mode) {
      move_y += 1;
-     Serial.println("no kurwea");
   } else if (key == 115 && mouse_mode) {
      move_y -= 1;
   } else if (key == 100 && mouse_mode) {
@@ -243,7 +237,6 @@ void release(int index) {
   } else {
     key = down[index];
   }
-  Serial.println(key);
   
   if (key == KEY_BACKSPACE) {
     if (backspace_pressed) {
