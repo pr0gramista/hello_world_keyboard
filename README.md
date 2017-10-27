@@ -19,3 +19,8 @@ My own mechanical, fully programmable, less than 30$ keyboard project (which wor
 ![Keyboard top](https://github.com/pr0gramista/hello_world_keyboard/blob/master/hello_world_keyboard/1.jpg?raw=true)
 ![Keyboard bottom](https://github.com/pr0gramista/hello_world_keyboard/blob/master/hello_world_keyboard/2.jpg?raw=true)
 ![Look at the soldering around switches](https://github.com/pr0gramista/hello_world_keyboard/blob/master/hello_world_keyboard/3.jpg?raw=true)
+
+## Some docs
+[Teensyduino: Using USB Keyboard with Teensy](https://www.pjrc.com/teensy/td_keyboard.html)
+
+[Arduino - MouseKeyboard](https://www.arduino.cc/en/Reference/MouseKeyboard)
