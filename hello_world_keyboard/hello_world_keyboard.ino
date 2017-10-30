@@ -2,7 +2,7 @@
 
 #define KEY_LAYER_DOWN 50920
 #define KEY_MOUSE_MODE 50921
-#define KEY_ENCODER_2 50922
+#define KEY_MACRO 50922
 #define EMPTY 50922
 #define PAD 50923
 #define SPACE 32
@@ -18,7 +18,7 @@ int matrix[] = {
   KEY_TAB, 113, 119, 101, 114, 116, 121, 117, 105, 111, 112, 91, 93, 92,
   KEY_CAPS_LOCK, PAD, 97, 115, 100, 102, 103, 104, 106, 107, 108, 59, 39, KEY_RETURN,
   KEY_LEFT_SHIFT, PAD, PAD, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, KEY_RIGHT_SHIFT,
-  KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, EMPTY, KEY_MOUSE_MODE
+  KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, KEY_MACRO, KEY_MOUSE_MODE
 };
 
 int down[] = {
@@ -26,7 +26,7 @@ int down[] = {
   126, KEY_HOME, KEY_UP_ARROW, KEY_END, 114, KEYPAD_7, KEYPAD_8, KEYPAD_9, KEY_NUM_LOCK, 111, 112, 91, KEY_PRINTSCREEN, KEY_DELETE,
   KEY_CAPS_LOCK, PAD, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW, 102, KEYPAD_4, KEYPAD_5, KEYPAD_6, KEY_INSERT, 108, 59, 39, KEY_RETURN,
   KEY_LEFT_SHIFT, PAD, PAD, 122, 120, 99, 118, KEYPAD_1, KEYPAD_2, KEYPAD_3, KEYPAD_0, 46, 47, KEY_RIGHT_SHIFT,
-  KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, KEY_ENCODER_2, KEY_MOUSE_MODE
+  KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, KEY_MACRO, KEY_MOUSE_MODE
 };
 
 boolean layer_down = false;
@@ -48,6 +48,9 @@ float wheel = 0;
 int new_x = 0;
 int old_x = 0;
 int count_down_x = 5;
+
+// Macro
+boolean macro = false;
 
 int old[75];
 
@@ -187,14 +190,20 @@ void press(int index) {
   } else {
     key = down[index];
   }
+
+  if (macro) {
+    Serial.print("press,");
+    Serial.println(index);
+    return;
+  }
   
   if (key == KEY_BACKSPACE) {
     if (!backspace_pressed) {
       backspace_pressed = true;
       Keyboard.press(key); 
     }
-  } else if (key == KEY_ENCODER_2) {
-    r_vertical = true;
+  } else if (key == KEY_MACRO) {
+    macro = true;
   } else if (key == KEY_SPACE) {
   } else if (key == KEY_RETURN) {
     if (!return_pressed) {
@@ -237,14 +246,25 @@ void release(int index) {
   } else {
     key = down[index];
   }
+
+  if (macro) {
+    if (key == KEY_MACRO) {
+      macro = false;
+      return;
+    } else {
+      Serial.print("release,");
+      Serial.println(index);
+      return;
+    }
+  }
   
   if (key == KEY_BACKSPACE) {
     if (backspace_pressed) {
       backspace_pressed = false;
       Keyboard.release(key); 
     }
-  } else if (key == KEY_ENCODER_2) {
-    r_vertical = false;
+  } else if (key == KEY_MACRO) {
+    macro = false;
   } else if (key == KEY_SPACE) {
     if (space_pressed) {
       space_pressed = false;
