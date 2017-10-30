@@ -192,9 +192,23 @@ void press(int index) {
   }
 
   if (macro) {
-    Serial.print("press,");
-    Serial.println(index);
-    return;
+    if(index == 41) {
+      Keyboard.press(MODIFIERKEY_RIGHT_CTRL);
+      Keyboard.press(KEY_1);
+      delay(10);
+      Keyboard.release(KEY_1);
+      Keyboard.release(MODIFIERKEY_RIGHT_CTRL);
+    } else if(index == 27) {
+      Keyboard.press(MODIFIERKEY_RIGHT_CTRL);
+      Keyboard.press(KEY_2);
+      delay(10);
+      Keyboard.release(KEY_2);
+      Keyboard.release(MODIFIERKEY_RIGHT_CTRL);
+    } else {
+      Serial.print("press,");
+      Serial.println(index);
+      return;
+    }
   }
   
   if (key == KEY_BACKSPACE) {
@@ -250,6 +264,8 @@ void release(int index) {
   if (macro) {
     if (key == KEY_MACRO) {
       macro = false;
+      return;
+    } else if(key == 41 || key == 27) {
       return;
     } else {
       Serial.print("release,");
