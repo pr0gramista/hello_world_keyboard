@@ -194,15 +194,17 @@ void press(int index) {
   if (macro) {
     if(index == 41) {
       Keyboard.press(MODIFIERKEY_RIGHT_CTRL);
-      Keyboard.press(KEY_1);
+      Keyboard.press(KEY_SCROLL_LOCK);
       delay(10);
-      Keyboard.release(KEY_1);
+      Keyboard.release(KEY_SCROLL_LOCK);
       Keyboard.release(MODIFIERKEY_RIGHT_CTRL);
     } else if(index == 27) {
       Keyboard.press(MODIFIERKEY_RIGHT_CTRL);
-      Keyboard.press(KEY_2);
+      Keyboard.press(MODIFIERKEY_RIGHT_SHIFT);
+      Keyboard.press(KEY_SCROLL_LOCK);
       delay(10);
-      Keyboard.release(KEY_2);
+      Keyboard.release(KEY_SCROLL_LOCK);
+      Keyboard.release(MODIFIERKEY_RIGHT_SHIFT);
       Keyboard.release(MODIFIERKEY_RIGHT_CTRL);
     } else {
       Serial.print("press,");
