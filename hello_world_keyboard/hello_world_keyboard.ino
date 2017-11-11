@@ -6,12 +6,15 @@
 #define EMPTY 50922
 #define PAD 50923
 #define SPACE 32
+#define BUTTON_CLEAN_SIZE 10
 
 #define DEBUG 0
 
 int ROWS = 5;
 int COLUMNS = 14;
 int KEYS = 23;
+
+int button_pressed[BUTTON_CLEAN_SIZE];
 
 int matrix[] = {
   KEY_ESC, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, KEY_BACKSPACE,
@@ -108,6 +111,43 @@ void scan() {
       }
     }
     unselectRow(i);
+  }
+}
+
+/* 
+ * Add button to release after it's unreachable
+ */
+void add_button_to_clean(int key) {
+  for (int i = 0; i < BUTTON_CLEAN_SIZE; i++) {
+    if (button_pressed[i] == 0) {
+      button_pressed[i] = key;
+      break;
+    }
+  }
+}
+
+/* 
+ * Remove button from being release after it's unreachable
+ */
+void remove_button_from_clean(int key) {
+  for (int i = 0; i < BUTTON_CLEAN_SIZE; i++) {
+    if (button_pressed[i] == key) {
+      button_pressed[i] = 0;
+      break;
+    }
+  }
+}
+
+/* 
+ * Release buttons that were added to be released after
+ * they are unreachable
+ */
+void clean_buttons() {
+  for (int i = 0; i < BUTTON_CLEAN_SIZE; i++) {
+    if (button_pressed[i] != 0) {
+      Keyboard.release(button_pressed[i]);
+      button_pressed[i] = 0;
+    }
   }
 }
 
@@ -211,6 +251,8 @@ void press(int index) {
       Serial.println(index);
       return;
     }
+  } else {
+    add_button_to_clean(key);
   }
   
   if (key == KEY_BACKSPACE) {
@@ -219,6 +261,7 @@ void press(int index) {
       Keyboard.press(key); 
     }
   } else if (key == KEY_MACRO) {
+    clean_buttons();
     macro = true;
   } else if (key == KEY_SPACE) {
   } else if (key == KEY_RETURN) {
@@ -227,6 +270,7 @@ void press(int index) {
       Keyboard.press(key); 
     }
   } else if (key == KEY_LAYER_DOWN) {
+    clean_buttons();
     layer_down = true;
   } else if (key == KEY_MOUSE_MODE) {
     Mouse.begin();
@@ -274,6 +318,8 @@ void release(int index) {
       Serial.println(index);
       return;
     }
+  } else {
+    remove_button_from_clean(key);
   }
   
   if (key == KEY_BACKSPACE) {
@@ -282,6 +328,7 @@ void release(int index) {
       Keyboard.release(key); 
     }
   } else if (key == KEY_MACRO) {
+    clean_buttons();
     macro = false;
   } else if (key == KEY_SPACE) {
     if (space_pressed) {
@@ -294,6 +341,7 @@ void release(int index) {
       Keyboard.release(key); 
     }
   } else if (key == KEY_LAYER_DOWN) {
+    clean_buttons();
     layer_down = false;
   } else if (key == KEY_MOUSE_MODE) {
     Mouse.end();
