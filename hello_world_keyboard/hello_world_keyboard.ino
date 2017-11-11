@@ -7,6 +7,7 @@
 #define PAD 50923
 #define SPACE 32
 #define BUTTON_CLEAN_SIZE 10
+#define BUTTON_CLEAN_EXCEPTIONS_SIZE 5
 
 #define DEBUG 0
 
@@ -15,6 +16,7 @@ int COLUMNS = 14;
 int KEYS = 23;
 
 int button_pressed[BUTTON_CLEAN_SIZE];
+int button_clean_exceptions[BUTTON_CLEAN_EXCEPTIONS_SIZE] = {KEY_LEFT_CTRL, KEY_LEFT_GUI, KEY_LEFT_ALT, KEY_LEFT_SHIFT, KEY_RIGHT_ALT}; // Remember to change BUTTON_CLEAN_EXCEPTIONS_SIZE
 
 int matrix[] = {
   KEY_ESC, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, KEY_BACKSPACE,
@@ -118,6 +120,13 @@ void scan() {
  * Add button to release after it's unreachable
  */
 void add_button_to_clean(int key) {
+  // We want modifier keys to be untouchable by this mechanism
+  for (int i = 0; i < BUTTON_CLEAN_EXCEPTIONS_SIZE; i++) {
+    if (button_clean_exceptions[i] == key) {
+      return;
+    }
+  }
+  
   for (int i = 0; i < BUTTON_CLEAN_SIZE; i++) {
     if (button_pressed[i] == 0) {
       button_pressed[i] = key;
