@@ -9,7 +9,7 @@
 #define BUTTON_CLEAN_SIZE 10
 #define BUTTON_CLEAN_EXCEPTIONS_SIZE 5
 
-#define DEBUG 0
+#define DEBUG 1
 
 int ROWS = 5;
 int COLUMNS = 14;
@@ -29,7 +29,7 @@ int matrix[] = {
 int down[] = {
   96, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5, KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, KEY_F11, KEY_F12, KEY_BACKSPACE,
   126, KEY_HOME, KEY_UP_ARROW, KEY_END, 114, KEYPAD_7, KEYPAD_8, KEYPAD_9, KEY_NUM_LOCK, 111, KEY_PAUSE, KEY_SCROLL_LOCK, KEY_PRINTSCREEN, KEY_DELETE,
-  KEY_CAPS_LOCK, PAD, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW, 102, KEYPAD_4, KEYPAD_5, KEYPAD_6, KEY_INSERT, 108, 59, 39, KEY_RETURN,
+  KEY_CAPS_LOCK, PAD, KEY_LEFT_ARROW, KEY_DOWN_ARROW, KEY_RIGHT_ARROW, 102, KEYPAD_4, KEYPAD_5, KEYPAD_6, 107, KEY_PAGE_UP, KEY_PAGE_DOWN, KEY_INSERT, KEY_RETURN,
   KEY_LEFT_SHIFT, PAD, PAD, 122, 120, 99, 118, KEYPAD_1, KEYPAD_2, KEYPAD_3, KEYPAD_0, 46, 47, KEY_RIGHT_SHIFT,
   KEY_LEFT_CTRL, PAD, PAD, KEY_LEFT_GUI, KEY_LEFT_ALT, SPACE, SPACE, SPACE, SPACE, SPACE, KEY_RIGHT_ALT, KEY_LAYER_DOWN, KEY_MACRO, KEY_MOUSE_MODE
 };
@@ -232,6 +232,30 @@ void mouse () {
   }
 }
 
+void pressCtrl() {
+  Keyboard.press(MODIFIERKEY_CTRL);
+}
+
+void releaseCtrl() {
+  Keyboard.release(MODIFIERKEY_CTRL);
+}
+
+void pressShift() {
+  Keyboard.press(MODIFIERKEY_SHIFT);
+}
+
+void releaseShift() {
+  Keyboard.release(MODIFIERKEY_SHIFT);
+}
+
+void pressAlt() {
+  Keyboard.press(MODIFIERKEY_ALT);
+}
+
+void releaseAlt() {
+  Keyboard.release(MODIFIERKEY_ALT);
+}
+
 void press(int index) {
   int key = 0;
   if (layer_down == false) {
@@ -247,7 +271,8 @@ void press(int index) {
       delay(10);
       Keyboard.release(KEY_SCROLL_LOCK);
       Keyboard.release(MODIFIERKEY_RIGHT_CTRL);
-    } else if(index == 27) {
+    } 
+    else if(index == 27) {
       Keyboard.press(MODIFIERKEY_RIGHT_CTRL);
       Keyboard.press(MODIFIERKEY_RIGHT_SHIFT);
       Keyboard.press(KEY_SCROLL_LOCK);
@@ -255,13 +280,114 @@ void press(int index) {
       Keyboard.release(KEY_SCROLL_LOCK);
       Keyboard.release(MODIFIERKEY_RIGHT_SHIFT);
       Keyboard.release(MODIFIERKEY_RIGHT_CTRL);
-    } else if(index == 0) {
+    } 
+    else if(index == 16) { // W - move line up
+      pressCtrl();
+      pressShift();
+      Keyboard.press(KEY_UP);
+      delay(5);
+      Keyboard.release(KEY_UP);
+      releaseShift();
+      releaseCtrl();
+    }
+    else if(index == 31) { // S - move line up
+      pressCtrl();
+      pressShift();
+      Keyboard.press(KEY_DOWN);
+      delay(5);
+      Keyboard.release(KEY_DOWN);
+      releaseShift();
+      releaseCtrl();
+    }
+    else if(index == 30) { // A
+      pressCtrl();
+      Keyboard.press(KEYPAD_MINUS);
+      delay(5);
+      Keyboard.release(KEYPAD_MINUS);
+      releaseCtrl();
+    } 
+    else if(index == 32) { // D
+      pressCtrl();
+      Keyboard.press(KEYPAD_PLUS);
+      delay(5);
+      Keyboard.release(KEYPAD_PLUS);
+      releaseCtrl();
+    } 
+    else if(index == 33) { // F - find file
+      pressCtrl();
+      pressShift();
+      Keyboard.press(KEY_N);
+      delay(5);
+      Keyboard.release(KEY_N);
+      releaseShift();
+      releaseCtrl();
+    }
+    else if(index == 15) { // Q - reformat
+      pressCtrl();
+      pressAlt();
+      Keyboard.press(KEY_L);
+      delay(5);
+      Keyboard.release(KEY_L);
+      releaseAlt();
+      releaseCtrl();
+    }
+    else if(index == 17) { // E - find symbol
+      pressCtrl();
+      pressAlt();
+      pressShift();
+      Keyboard.press(KEY_N);
+      delay(5);
+      Keyboard.release(KEY_N);
+      releaseShift();
+      releaseAlt();
+      releaseCtrl();
+    }
+    else if(index == 18) { // R - refactor
+      pressCtrl();
+      pressAlt();
+      pressShift();
+      Keyboard.press(KEY_T);
+      delay(5);
+      Keyboard.release(KEY_T);
+      releaseShift();
+      releaseAlt();
+      releaseCtrl();
+    }
+    else if(index == 45) { // Z - Run...
+      pressAlt();
+      pressShift();
+      Keyboard.press(KEY_F10);
+      delay(5);
+      Keyboard.release(KEY_F10);
+      releaseShift();
+      releaseAlt();
+    }
+    else if(index == 46) { // X - File Structure
+      pressCtrl();
+      Keyboard.press(KEY_F12);
+      delay(5);
+      Keyboard.release(KEY_F12);
+      releaseCtrl();
+    }
+    else if(index == 47) { // C - Show local changes...
+      pressCtrl();
+      pressAlt();
+      pressShift();
+      Keyboard.press(KEY_D);
+      delay(5);
+      Keyboard.release(KEY_D);
+      releaseShift();
+      releaseAlt();
+      releaseCtrl();
+    }
+    else if(index == 0) {
       unpressAll();
-    } else {
+    } 
+    else {
       Serial.print("press,");
       Serial.println(index);
-      return;
     }
+    return;
   } else {
     add_button_to_clean(key);
   }
