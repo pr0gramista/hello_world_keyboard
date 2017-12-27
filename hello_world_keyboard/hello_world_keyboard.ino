@@ -52,7 +52,7 @@ float wheel = 0;
 // Joystick
 int new_x = 0;
 int old_x = 0;
-int count_down_x = 5;
+int count_down_x = 1;
 
 // Macro
 boolean macro = false;
@@ -170,9 +170,14 @@ void loop() {
 
   int x_axis = 1024 - analogRead(18);
   if (x_axis == new_x) {
+    #if DEBUG
+    Serial.print("Count down ");
+    Serial.println(count_down_x);
+    #endif
     count_down_x = count_down_x - 1;
     if (count_down_x < 0) {
       old_x = new_x;
+      count_down_x = 1;
     }
   } else {
     new_x = x_axis;
