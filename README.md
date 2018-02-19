@@ -14,6 +14,14 @@ My own mechanical, fully programmable, less than 30$ keyboard project (which wor
 * Potentiometer as joystick axis/sensitivity dial
 * Encoder as arrows
 
+## Installation
+1. Download and install Arduino IDE 1.8.5 (or check Teensyduino compatible versions)
+2. Download and install [Teensyduino](https://www.pjrc.com/teensy/td_download.html)
+3. Download [Rotary library](https://github.com/brianlow/Rotary)
+4. Put Rotary library in `C:\...\Arduino\libraries\Rotary` so there is file `C:\...\Arduino\libraries\Rotary\Rotary.h`
+5. Set DEBUG as you wish
+6. HF
+
 ## Some photos
 ### hello_world_keyboard
 ![Keyboard top](https://github.com/pr0gramista/hello_world_keyboard/blob/master/hello_world_keyboard/1.jpg?raw=true)
