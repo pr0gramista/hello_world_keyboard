@@ -171,8 +171,8 @@ void loop() {
   int x_axis = 1024 - analogRead(18);
   if (x_axis == new_x) {
     #if DEBUG
-    Serial.print("Count down ");
-    Serial.println(count_down_x);
+    //Serial.print("Count down ");
+    //Serial.println(count_down_x);
     #endif
     count_down_x = count_down_x - 1;
     if (count_down_x < 0) {
@@ -384,6 +384,9 @@ void press(int index) {
       releaseShift();
       releaseAlt();
       releaseCtrl();
+    }
+    else if(index == 2) { // 2 - press W without release
+      Keyboard.press(KEY_W);
     }
     else if(index == 0) {
       unpressAll();
