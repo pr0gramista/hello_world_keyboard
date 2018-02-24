@@ -388,6 +388,24 @@ void press(int index) {
     else if(index == 2) { // 2 - press W without release
       Keyboard.press(KEY_W);
     }
+    else if(index == 11) { // 2 - press W without release
+      Keyboard.press(MODIFIERKEY_GUI);
+      pressCtrl();
+      Keyboard.press(KEY_LEFT);
+      delay(5);
+      Keyboard.release(KEY_LEFT);
+      releaseCtrl();
+      Keyboard.release(MODIFIERKEY_GUI);
+    }
+    else if(index == 12) { // 2 - press W without release
+      Keyboard.press(MODIFIERKEY_GUI);
+      pressCtrl();
+      Keyboard.press(KEY_RIGHT);
+      delay(5);
+      Keyboard.release(KEY_RIGHT);
+      releaseCtrl();
+      Keyboard.release(MODIFIERKEY_GUI);
+    }
     else if(index == 0) {
       unpressAll();
     } 
