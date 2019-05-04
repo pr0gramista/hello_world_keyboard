@@ -24,6 +24,8 @@ My own mechanical, fully programmable, less than 30$ keyboard project (which wor
 
 ## Some photos
 ### hello_world_keyboard
+![Keyboard](https://github.com/pr0gramista/hello_world_keyboard/blob/master/hello_world_keyboard/4.jpg?raw=true)
+Before new casing
 ![Keyboard top](https://github.com/pr0gramista/hello_world_keyboard/blob/master/hello_world_keyboard/1.jpg?raw=true)
 ![Keyboard bottom](https://github.com/pr0gramista/hello_world_keyboard/blob/master/hello_world_keyboard/2.jpg?raw=true)
 ![Look at the soldering around switches](https://github.com/pr0gramista/hello_world_keyboard/blob/master/hello_world_keyboard/3.jpg?raw=true)
